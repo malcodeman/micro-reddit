@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/malcodeman/micro-reddit#readme",
   "dependencies": {
+    "@koa/cors": "2",
     "axios": "^0.18.0",
     "koa": "^2.6.1",
     "koa-route": "^3.2.0"

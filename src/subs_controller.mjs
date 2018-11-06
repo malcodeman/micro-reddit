@@ -3,7 +3,17 @@ import axios from "axios";
 const parseJson = json => {
   const posts = [];
   json.forEach(element => {
-    posts.push({ title: element.data.title, nsfw: element.data.over_18 });
+    posts.push({
+      id: element.data.id,
+      title: element.data.title,
+      nsfw: element.data.over_18,
+      is_video: element.data.is_video,
+      subreddit: element.data.subreddit,
+      pic_url: element.data.url,
+      comments_count: element.data.num_comments,
+      upvotes_count: element.data.ups,
+      post_url: `https://www.reddit.com${element.data.permalink}`
+    });
   });
   return posts;
 };

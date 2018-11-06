@@ -8,8 +8,15 @@ const parseJson = json => {
   return posts;
 };
 
+const getUrl = (sub, query) => {
+  if (query.after) {
+    return `https://www.reddit.com/r/${sub}/top.json?after=${query.after}`;
+  }
+  return `https://www.reddit.com/r/${sub}/top.json`;
+};
+
 export const getSub = async (ctx, subreddit) => {
-  const url = `https://www.reddit.com/r/${subreddit}/top.json`;
+  const url = getUrl(subreddit, ctx.query);
   const response = await axios.get(url);
   const data = response.data.data.children;
   const before = response.data.data.before;

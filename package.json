@@ -2,10 +2,10 @@
   "name": "micro-reddit",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --experimental-modules index"
+    "start": "nodemon --experimental-modules src/$npm_package_main"
   },
   "repository": {
     "type": "git",
@@ -19,7 +19,8 @@
   "homepage": "https://github.com/malcodeman/micro-reddit#readme",
   "dependencies": {
     "axios": "^0.18.0",
-    "koa": "^2.6.1"
+    "koa": "^2.6.1",
+    "koa-route": "^3.2.0"
   },
   "devDependencies": {
     "nodemon": "^1.18.6"

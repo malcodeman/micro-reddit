@@ -1,8 +1,4 @@
-import Koa from "koa";
 import axios from "axios";
-
-const app = new Koa();
-const PORT = process.env.PORT || 3000;
 
 const parseJson = json => {
   const posts = [];
@@ -12,8 +8,8 @@ const parseJson = json => {
   return posts;
 };
 
-app.use(async ctx => {
-  const url = "https://www.reddit.com/r/popular/top.json";
+export const getSub = async (ctx, subreddit) => {
+  const url = `https://www.reddit.com/r/${subreddit}/top.json`;
   const response = await axios.get(url);
   const data = response.data.data.children;
   const before = response.data.data.before;
@@ -21,6 +17,4 @@ app.use(async ctx => {
   const posts = parseJson(data);
 
   ctx.body = { posts, before, after };
-});
-
-app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+};

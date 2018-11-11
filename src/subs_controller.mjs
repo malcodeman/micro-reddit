@@ -24,33 +24,52 @@ const parseGifv = imgur_url => {
   return `${url.protocol}//${url.hostname}/${getFilename(url.pathname)}.mp4`;
 };
 
-const parseJson = json => {
-  const posts = [];
-  json.forEach((element, index) => {
-    posts.push({
+async function parseGfycat(gfycat_url) {
+  const url = new URL(gfycat_url);
+  const id = url.pathname;
+  const res = await axios.get(`https://gfycat.com/cajax/get${id}`);
+
+  return `${res.data.gfyItem.mp4Url}`;
+}
+
+function parseJson(json) {
+  return json.map(element => {
+    const parsedElement = {
       id: element.data.id,
       title: element.data.title,
       nsfw: element.data.over_18,
-      is_video: element.data.is_video,
       subreddit: element.data.subreddit,
       comments_count: element.data.num_comments,
       upvotes_count: element.data.ups,
-      post_url: `https://www.reddit.com${element.data.permalink}`
-    });
-    if (posts[index].is_video) {
-      posts[index].video_url = element.data.media.reddit_video.fallback_url;
-    } else {
-      posts[index].pic_url = element.data.url;
+      post_url: `https://www.reddit.com${element.data.permalink}`,
+      domain: element.data.domain,
+      url: element.data.url
+    };
+    if (
+      element.data.media &&
+      element.data.media.reddit_video &&
+      element.data.media.reddit_video.fallback_url
+    ) {
+      parsedElement.video_url = element.data.media.reddit_video.fallback_url;
     }
-    if (element.data.media && element.data.media.type === "youtube.com") {
-      posts[index].youtube_video_url = parseYoutubeVideo(element.data.url);
-    }
-    if (getExtension(element.data.url) === ".gifv") {
-      posts[index].video_url = parseGifv(element.data.url);
-    }
+    return parsedElement;
   });
+}
+
+async function isVideo(posts) {
+  for (let post of posts) {
+    if (post.domain === "gfycat.com") {
+      post.video_url = await parseGfycat(post.url);
+    }
+    if (getExtension(post.url) === ".gifv") {
+      post.video_url = parseGifv(post.url);
+    }
+    if (post.domain === "youtube.com" || post.domain === "youtu.be") {
+      post.youtube_video_url = parseYoutubeVideo(post.url);
+    }
+  }
   return posts;
-};
+}
 
 const getUrl = (sub, query) => {
   if (query.after) {
@@ -65,7 +84,7 @@ export const getSub = async (ctx, subreddit) => {
   const data = response.data.data.children;
   const before = response.data.data.before;
   const after = response.data.data.after;
-  const posts = parseJson(data);
+  const posts = await isVideo(parseJson(data));
 
   ctx.body = { posts, before, after };
 };

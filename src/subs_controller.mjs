@@ -26,10 +26,15 @@ const parseGifv = imgur_url => {
 
 async function parseGfycat(gfycat_url) {
   const url = new URL(gfycat_url);
-  const id = url.pathname;
-  const res = await axios.get(`https://gfycat.com/cajax/get${id}`);
-
-  return `${res.data.gfyItem.mp4Url}`;
+  const pathname = url.pathname;
+  const id = pathname.split("/").pop();
+  try {
+    const res = await axios.get(`https://gfycat.com/cajax/get/${id}`);
+    return `${res.data.gfyItem.mp4Url}`;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
 }
 
 function parseJson(json) {

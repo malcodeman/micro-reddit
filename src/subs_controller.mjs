@@ -37,6 +37,22 @@ async function parseGfycat(gfycat_url) {
   }
 }
 
+async function parseBehance(behance_url) {
+  const url = new URL(behance_url);
+  const pathname = url.pathname;
+  const id = pathname.split("/").reverse()[1];
+  const behance_api_key = process.env.BEHANCE_API_KEY;
+  try {
+    const res = await axios.get(
+      `https://www.behance.net/v2/projects/${id}?api_key=${behance_api_key}`
+    );
+    return res.data.project.modules[0].src;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
 function parseJson(json) {
   return json.map(element => {
     const parsedElement = {
@@ -80,10 +96,13 @@ async function processVideos(posts) {
   return posts;
 }
 
-function processImages(posts) {
+async function processImages(posts) {
   for (let post of posts) {
     if (post.domain === "imgur.com" && getExtension(post.url) !== ".jpg") {
       post.url = post.url += ".jpg";
+    }
+    if (post.domain === "behance.net") {
+      post.url = await parseBehance(post.url);
     }
   }
   return posts;
@@ -102,7 +121,7 @@ export const getSub = async (ctx, subreddit) => {
   const data = response.data.data.children;
   const before = response.data.data.before;
   const after = response.data.data.after;
-  const posts = await processVideos(processImages(parseJson(data)));
+  const posts = await processVideos(await processImages(parseJson(data)));
 
   ctx.body = { posts, before, after };
 };

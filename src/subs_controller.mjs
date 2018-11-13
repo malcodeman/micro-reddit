@@ -69,7 +69,11 @@ async function processVideos(posts) {
     if (getExtension(post.url) === ".gifv") {
       post.video_url = parseGifv(post.url);
     }
-    if (post.domain === "youtube.com" || post.domain === "youtu.be") {
+    if (
+      post.domain === "youtube.com" ||
+      post.domain === "youtu.be" ||
+      post.domain === "m.youtube.com"
+    ) {
       post.youtube_video_url = parseYoutubeVideo(post.url);
     }
   }

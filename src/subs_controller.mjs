@@ -55,3 +55,23 @@ export const getSub = async (ctx, subreddit) => {
 
   ctx.body = { posts, before, after };
 };
+
+function parsePopularSubs(json) {
+  return json.map(element => {
+    const parsedElement = {
+      id: element.data.subreddit_id,
+      subreddit: element.data.subreddit,
+      subreddit_name_prefixed: element.data.subreddit_name_prefixed,
+      subscribers_count: element.data.subreddit_subscribers
+    };
+    return parsedElement;
+  });
+}
+
+export async function getPopularSubs(ctx) {
+  const res = await axios.get("https://www.reddit.com/r/popular.json");
+  const data = res.data.data.children;
+  const subs = parsePopularSubs(data);
+
+  ctx.body = { subs };
+}

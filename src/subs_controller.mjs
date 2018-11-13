@@ -61,7 +61,7 @@ function parseJson(json) {
   });
 }
 
-async function isVideo(posts) {
+async function processVideos(posts) {
   for (let post of posts) {
     if (post.domain === "gfycat.com") {
       post.video_url = await parseGfycat(post.url);
@@ -71,6 +71,15 @@ async function isVideo(posts) {
     }
     if (post.domain === "youtube.com" || post.domain === "youtu.be") {
       post.youtube_video_url = parseYoutubeVideo(post.url);
+    }
+  }
+  return posts;
+}
+
+function processImages(posts) {
+  for (let post of posts) {
+    if (post.domain === "imgur.com" && getExtension(post.url) !== ".jpg") {
+      post.url = post.url += ".jpg";
     }
   }
   return posts;
@@ -89,7 +98,7 @@ export const getSub = async (ctx, subreddit) => {
   const data = response.data.data.children;
   const before = response.data.data.before;
   const after = response.data.data.after;
-  const posts = await isVideo(parseJson(data));
+  const posts = await processVideos(processImages(parseJson(data)));
 
   ctx.body = { posts, before, after };
 };

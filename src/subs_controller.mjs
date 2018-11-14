@@ -60,8 +60,8 @@ function parsePopularSubs(json) {
   return json.map(element => {
     const parsedElement = {
       id: element.data.subreddit_id,
-      subreddit: element.data.subreddit,
-      subreddit_name_prefixed: element.data.subreddit_name_prefixed,
+      name: element.data.subreddit,
+      name_prefixed: element.data.subreddit_name_prefixed,
       subscribers_count: element.data.subreddit_subscribers
     };
     return parsedElement;

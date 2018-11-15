@@ -64,7 +64,8 @@ function parseJson(json) {
       upvotes_count: element.data.ups,
       post_url: `https://www.reddit.com${element.data.permalink}`,
       domain: element.data.domain,
-      url: element.data.url
+      url: element.data.url,
+      text_post: element.data.is_self
     };
     if (
       element.data.media &&

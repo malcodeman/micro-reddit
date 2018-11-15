@@ -2,10 +2,10 @@
   "name": "micro-reddit",
   "version": "1.0.0",
   "description": "",
-  "main": "index.mjs",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --require dotenv/config --experimental-modules src/$npm_package_main"
+    "start": "nodemon --require dotenv/config -r esm src/$npm_package_main"
   },
   "repository": {
     "type": "git",
@@ -20,6 +20,7 @@
   "dependencies": {
     "@koa/cors": "2",
     "axios": "^0.18.0",
+    "esm": "^3.0.84",
     "koa": "^2.6.1",
     "koa-route": "^3.2.0"
   },

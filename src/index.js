@@ -2,7 +2,7 @@ import Koa from "koa";
 import route from "koa-route";
 import cors from "@koa/cors";
 
-import { getSub, getPopularSubs } from "./subs_controller.mjs";
+import { getSub, getPopularSubs } from "./subs_controller.js";
 
 const app = new Koa();
 app.use(cors());

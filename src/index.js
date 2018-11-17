@@ -8,6 +8,6 @@ const app = new Koa();
 app.use(cors());
 const PORT = process.env.PORT || 8080;
 
-app.use(route.get("/subs/:subreddit", getSub));
+app.use(route.get("/subs/:subreddit/:sort", getSub));
 app.use(route.get("/popular", getPopularSubs));
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`));

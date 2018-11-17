@@ -36,15 +36,27 @@ async function processImages(posts) {
   return posts;
 }
 
-const getUrl = (sub, query) => {
-  if (query.after) {
-    return `https://www.reddit.com/r/${sub}/top.json?after=${query.after}`;
+const getUrl = (sub, sort, query) => {
+  // Sorts that can have time query
+  const sorts = ["controversial", "top"];
+
+  if (sort === sorts[0] || sort === sorts[1]) {
+    const time = query.t;
+    if (query.after) {
+      return `https://www.reddit.com/r/${sub}/${sort}.json?after=${
+        query.after
+      }&t=${time}`;
+    }
+    return `https://www.reddit.com/r/${sub}/${sort}.json?t=${time}`;
   }
-  return `https://www.reddit.com/r/${sub}/top.json`;
+  if (query.after) {
+    return `https://www.reddit.com/r/${sub}/${sort}.json?after=${query.after}`;
+  }
+  return `https://www.reddit.com/r/${sub}/${sort}.json`;
 };
 
-export const getSub = async (ctx, subreddit) => {
-  const url = getUrl(subreddit, ctx.query);
+export const getSub = async (ctx, subreddit, sort) => {
+  const url = getUrl(subreddit, sort, ctx.query);
   const response = await axios.get(url);
   const data = response.data.data.children;
   const before = response.data.data.before;

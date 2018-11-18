@@ -4,6 +4,9 @@ import helpers from "./helpers";
 
 async function processVideos(posts) {
   for (let post of posts) {
+    if (helpers.getExtension(post.url) === ".mp4") {
+      post.video_url = post.url;
+    }
     if (post.domain === "gfycat.com") {
       post.video_url = await helpers.parseGfycat(post.url);
     }
@@ -17,8 +20,15 @@ async function processVideos(posts) {
     ) {
       post.iframe_video = helpers.parseYoutubeVideo(post.url);
     }
-    if (post.domain === "de.pornhub.com" || post.domain === "es.pornhub.com") {
-      post.iframe_video = await helpers.parsePornhub(post.url);
+    if (
+      post.domain === "pornhub.com" ||
+      post.domain === "de.pornhub.com" ||
+      post.domain === "es.pornhub.com"
+    ) {
+      post.iframe_video = helpers.parsePornhub(post.url);
+    }
+    if (post.domain === "xvideos.com") {
+      post.iframe_video = helpers.parseXvideos(post.url);
     }
   }
   return posts;

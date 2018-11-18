@@ -85,6 +85,12 @@ function parsePornhub(pornhub_url) {
   return `https://de.pornhub.com/embed/${view_key}`;
 }
 
+function parseXvideos(xvideos_url) {
+  const url = new URL(xvideos_url);
+  const id = url.pathname.split("/")[1].replace("video", "");
+  return `https://www.xvideos.com/embedframe/${id}`;
+}
+
 function parseJson(json) {
   return json.map(element => {
     const parsedElement = {
@@ -120,5 +126,6 @@ export default {
   parseYoutubeVideo,
   isImgurAlbum,
   parseImgurAlbum,
-  parsePornhub
+  parsePornhub,
+  parseXvideos
 };

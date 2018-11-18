@@ -7,7 +7,7 @@ async function processVideos(posts) {
     if (helpers.getExtension(post.url) === ".mp4") {
       post.video_url = post.url;
     }
-    if (post.domain === "gfycat.com") {
+    if (post.domain === "gfycat.com" || post.domain === "zippy.gfycat.com") {
       post.video_url = await helpers.parseGfycat(post.url);
     }
     if (helpers.getExtension(post.url) === ".gifv") {
@@ -45,7 +45,10 @@ async function processImages(posts) {
     ) {
       post.url = post.url += ".jpg";
     }
-    if (post.domain === "imgur.com" && helpers.isImgurAlbum(post.url)) {
+    if (
+      (post.domain === "imgur.com" || post.domain === "m.imgur.com") &&
+      helpers.isImgurAlbum(post.url)
+    ) {
       post.imgur_album = await helpers.parseImgurAlbum(post.url);
     }
     if (post.domain === "behance.net") {

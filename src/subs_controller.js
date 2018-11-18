@@ -15,7 +15,10 @@ async function processVideos(posts) {
       post.domain === "youtu.be" ||
       post.domain === "m.youtube.com"
     ) {
-      post.youtube_video_url = helpers.parseYoutubeVideo(post.url);
+      post.iframe_video = helpers.parseYoutubeVideo(post.url);
+    }
+    if (post.domain === "de.pornhub.com" || post.domain === "es.pornhub.com") {
+      post.iframe_video = await helpers.parsePornhub(post.url);
     }
   }
   return posts;
@@ -30,7 +33,7 @@ async function processImages(posts) {
       post.url = post.url += ".jpg";
     }
     if (post.domain === "imgur.com" && helpers.isImgurAlbum(post.url)) {
-      post.imgurAlbum = await helpers.parseImgurAlbum(post.url);
+      post.imgur_album = await helpers.parseImgurAlbum(post.url);
     }
     if (post.domain === "behance.net") {
       post.url = await helpers.parseBehance(post.url);

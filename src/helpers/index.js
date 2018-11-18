@@ -79,6 +79,12 @@ function isImgurAlbum(imgur_link) {
   return url.pathname.split("/")[1] === "a";
 }
 
+function parsePornhub(pornhub_url) {
+  const url = new URL(pornhub_url);
+  const view_key = url.searchParams.get("viewkey");
+  return `https://de.pornhub.com/embed/${view_key}`;
+}
+
 function parseJson(json) {
   return json.map(element => {
     const parsedElement = {
@@ -113,5 +119,6 @@ export default {
   getExtension,
   parseYoutubeVideo,
   isImgurAlbum,
-  parseImgurAlbum
+  parseImgurAlbum,
+  parsePornhub
 };

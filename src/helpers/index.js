@@ -1,5 +1,6 @@
 import axios from "axios";
 import path from "path";
+import { request } from "graphql-request";
 
 function parseYoutubeVideo(youtube_video_url) {
   const url = new URL(youtube_video_url);
@@ -91,6 +92,47 @@ function parseXvideos(xvideos_url) {
   return `https://www.xvideos.com/embedframe/${id}`;
 }
 
+async function parseSupload(supload_url) {
+  const url = new URL(supload_url).pathname.replace("/", "");
+  const query = `{
+    image(imageId: "${url}"){
+      id
+      views
+      upvotes
+      date
+      type
+      compressed
+      description
+      tags
+      uname
+      title
+      width
+      height
+      albumIds
+      private
+      album
+      copyright
+      adult
+      images {
+        id
+        description
+        width
+        height
+        type
+        compressed
+      }
+    }
+  }`;
+
+  try {
+    const res = await request("https://supload.com/graphql", query);
+    const id = res.image.images[0].id;
+    return `https://i.supload.com/${id}-hd.mp4`;
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 function parseJson(json) {
   return json.map(element => {
     const parsedElement = {
@@ -127,5 +169,6 @@ export default {
   isImgurAlbum,
   parseImgurAlbum,
   parsePornhub,
-  parseXvideos
+  parseXvideos,
+  parseSupload
 };

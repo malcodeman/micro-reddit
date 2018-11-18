@@ -30,6 +30,9 @@ async function processVideos(posts) {
     if (post.domain === "xvideos.com") {
       post.iframe_video = helpers.parseXvideos(post.url);
     }
+    if (post.domain === "supload.com") {
+      post.video_url = await helpers.parseSupload(post.url);
+    }
   }
   return posts;
 }

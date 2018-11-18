@@ -53,6 +53,32 @@ async function parseBehance(behance_url) {
   }
 }
 
+async function parseImgurAlbum(imgur_link) {
+  const url = new URL(imgur_link);
+  const id = getFilename(url.pathname.split("/").reverse()[0]);
+  const imgur_client_id = process.env.IMGUR_CLIENT_ID;
+  const config = {
+    headers: {
+      Authorization: `Client-ID ${imgur_client_id}`
+    }
+  };
+  try {
+    const res = await axios.get(
+      `https://api.imgur.com/3/album/${id}/images`,
+      config
+    );
+    return res.data.data.map(image => image.link);
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+}
+
+function isImgurAlbum(imgur_link) {
+  const url = new URL(imgur_link);
+  return url.pathname.split("/")[1] === "a";
+}
+
 function parseJson(json) {
   return json.map(element => {
     const parsedElement = {
@@ -85,5 +111,7 @@ export default {
   parseGifv,
   getFilename,
   getExtension,
-  parseYoutubeVideo
+  parseYoutubeVideo,
+  isImgurAlbum,
+  parseImgurAlbum
 };

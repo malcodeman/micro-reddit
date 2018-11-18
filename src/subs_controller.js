@@ -29,6 +29,9 @@ async function processImages(posts) {
     ) {
       post.url = post.url += ".jpg";
     }
+    if (post.domain === "imgur.com" && helpers.isImgurAlbum(post.url)) {
+      post.imgurAlbum = await helpers.parseImgurAlbum(post.url);
+    }
     if (post.domain === "behance.net") {
       post.url = await helpers.parseBehance(post.url);
     }

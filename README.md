@@ -17,6 +17,7 @@ Micro reddit requires __node v11.0.0__ or higher for [URL module](https://nodejs
 
 .env file should look like this:
 ```
+PORT=8080
 BEHANCE_API_KEY=123
 IMGUR_CLIENT_ID=123
 ```

@@ -6,7 +6,7 @@ import { getSub, getPopularSubs } from "./subs_controller.js";
 
 const app = new Koa();
 app.use(cors());
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT;
 
 app.use(route.get("/subs/:subreddit/:sort", getSub));
 app.use(route.get("/popular", getPopularSubs));

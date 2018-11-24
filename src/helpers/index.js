@@ -28,7 +28,7 @@ function parseGifv(imgur_url) {
 async function parseGfycat(gfycat_url) {
   const url = new URL(gfycat_url);
   const pathname = url.pathname;
-  const id = pathname.split("/").pop();
+  const id = pathname.split("/")[1];
   try {
     const res = await axios.get(`https://gfycat.com/cajax/get/${id}`);
     return `${res.data.gfyItem.mp4Url}`;

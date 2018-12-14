@@ -30,7 +30,16 @@ async function parseGfycat(gfycat_url) {
   const pathname = url.pathname;
   const id = pathname.split("/")[1];
   try {
-    const res = await axios.get(`https://gfycat.com/cajax/get/${id}`);
+    const gfycat_api_key = process.env.GFYCAT_API_KEY;
+    const config = {
+      headers: {
+        Authorization: `Bearer ${gfycat_api_key}`
+      }
+    };
+    const res = await axios.get(
+      `https://api.gfycat.com/v1/gfycats/${id}`,
+      config
+    );
     return `${res.data.gfyItem.mp4Url}`;
   } catch (error) {
     console.log(error);

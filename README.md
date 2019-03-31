@@ -1,16 +1,9 @@
 # Micro-reddit
 
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebook/react/blob/master/LICENSE)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/malcodeman/micro-reddit/blob/master/LICENSE)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
 Microservice for getting direct image | video links from subreddits.
-
-## Table of Contents
-
-- [Usage](#usage)
-- [Design decisions](#design-decisions)
-- [Documentation](#documentation)
-- [License](#license)
 
 ## Usage
 

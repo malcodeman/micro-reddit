@@ -167,6 +167,32 @@ function parseJson(json) {
   });
 }
 
+function parsePathname(pathname) {
+  const split = pathname.split("/");
+  const filtered = split.filter(item => item.length);
+
+  return filtered;
+}
+
+async function parseFlickr(flickrUrl) {
+  const FLICKR_API_KEY = process.env.FLICKR_API_KEY;
+  const url = new URL(flickrUrl);
+  const pathname = parsePathname(url.pathname);
+  const photoId = pathname[2];
+
+  try {
+    const res = await axios.get(
+      `https://www.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key=${FLICKR_API_KEY}&photo_id=${photoId}&format=json&nojsoncallback=1`
+    );
+    const index = res.data.sizes.size.length - 1;
+    const source = res.data.sizes.size[index].source;
+
+    return source;
+  } catch (error) {
+    throw new Error(error);
+  }
+}
+
 export default {
   parseJson,
   parseBehance,
@@ -179,5 +205,6 @@ export default {
   parseImgurAlbum,
   parsePornhub,
   parseXvideos,
-  parseSupload
+  parseSupload,
+  parseFlickr
 };

@@ -54,6 +54,9 @@ async function processImages(posts) {
     if (post.domain === "behance.net") {
       post.url = await helpers.parseBehance(post.url);
     }
+    if (post.domain === "flickr.com") {
+      post.url = await helpers.parseFlickr(post.url);
+    }
   }
   return posts;
 }

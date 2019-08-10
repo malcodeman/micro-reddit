@@ -16,6 +16,7 @@ PORT=8080
 BEHANCE_API_KEY=123
 IMGUR_CLIENT_ID=123
 GFYCAT_API_KEY=123
+FLICKR_API_KEY=123
 ```
 
 To start the service run:
@@ -54,6 +55,7 @@ Supported third-party services:
 - youtube
 - pornhub
 - xvideos
+- flickr
 
 ## License
 

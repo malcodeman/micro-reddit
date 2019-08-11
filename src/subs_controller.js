@@ -80,8 +80,8 @@ const getUrl = (sub, sort, query) => {
   return `https://www.reddit.com/r/${sub}/${sort}.json`;
 };
 
-export const getSub = async (ctx, subreddit, sort) => {
-  const url = getUrl(subreddit, sort, ctx.query);
+export const getSub = async (subreddit, sort, query) => {
+  const url = getUrl(subreddit, sort, query);
   const response = await axios.get(url);
   const data = response.data.data.children;
   const before = response.data.data.before;
@@ -90,7 +90,7 @@ export const getSub = async (ctx, subreddit, sort) => {
     await processImages(helpers.parseJson(data))
   );
 
-  ctx.body = { posts, before, after };
+  return { posts, before, after };
 };
 
 function parsePopularSubs(json) {
@@ -105,10 +105,10 @@ function parsePopularSubs(json) {
   });
 }
 
-export async function getPopularSubs(ctx) {
+export async function getPopularSubs() {
   const res = await axios.get("https://www.reddit.com/r/popular.json");
   const data = res.data.data.children;
   const subs = parsePopularSubs(data);
 
-  ctx.body = { subs };
+  return subs;
 }

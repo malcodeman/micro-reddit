@@ -35,8 +35,8 @@ Why ... ?
 - [esm](https://github.com/standard-things/esm) ?
   Since node still doesn't support ECMAScript modules without --experimental-modules flag using esm was necessary to avoid .mjs file extension.
   When node starts supporting modules removing `-r esm` from package.json start script is all that's needed.
-- [koa](https://github.com/koajs/koa) ?
-  Simply for exploring koajs middleware framework as a valid express alternative.
+- [fastify](https://github.com/fastify/fastify) ?
+  Speed.
 
 ## Documentation
 

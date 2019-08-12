@@ -2,7 +2,13 @@ import app from "./app";
 
 const PORT = process.env.PORT;
 
-app.listen(PORT, (err, address) => {
-  if (err) throw err;
-  app.log.info(`server listening on ${address}`);
-});
+async function start() {
+  try {
+    await app.listen(PORT);
+  } catch (err) {
+    app.log.error(err);
+    process.exit(1);
+  }
+}
+
+start();

@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import helpers from "./subredditsUtil";
+import { REDDIT } from "./subredditsConstants";
 
 async function processVideos(posts) {
   for (let post of posts) {
@@ -68,16 +69,14 @@ const getUrl = (sub, sort, query) => {
   if (sort === sorts[0] || sort === sorts[1]) {
     const time = query.t;
     if (query.after) {
-      return `https://www.reddit.com/r/${sub}/${sort}.json?after=${
-        query.after
-      }&t=${time}`;
+      return `${REDDIT}/r/${sub}/${sort}.json?after=${query.after}&t=${time}`;
     }
-    return `https://www.reddit.com/r/${sub}/${sort}.json?t=${time}`;
+    return `${REDDIT}/r/${sub}/${sort}.json?t=${time}`;
   }
   if (query.after) {
-    return `https://www.reddit.com/r/${sub}/${sort}.json?after=${query.after}`;
+    return `${REDDIT}/r/${sub}/${sort}.json?after=${query.after}`;
   }
-  return `https://www.reddit.com/r/${sub}/${sort}.json`;
+  return `${REDDIT}/r/${sub}/${sort}.json`;
 };
 
 export const getSubreddit = async (subreddit, sort, query) => {
@@ -106,7 +105,7 @@ function parsePopularSubs(json) {
 }
 
 export async function getPopularSubreddits() {
-  const res = await axios.get("https://www.reddit.com/r/popular.json");
+  const res = await axios.get(`${REDDIT}/r/popular.json`);
   const data = res.data.data.children;
   const subs = parsePopularSubs(data);
 

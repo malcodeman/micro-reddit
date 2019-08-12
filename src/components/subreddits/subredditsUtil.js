@@ -2,6 +2,8 @@ import axios from "axios";
 import path from "path";
 import { request } from "graphql-request";
 
+import { REDDIT } from "./subredditsConstants";
+
 function parseYoutubeVideo(youtube_video_url) {
   const url = new URL(youtube_video_url);
   const video_id = url.searchParams.get("v");
@@ -151,7 +153,7 @@ function parseJson(json) {
       subreddit: element.data.subreddit,
       comments_count: element.data.num_comments,
       upvotes_count: element.data.ups,
-      post_url: `https://www.reddit.com${element.data.permalink}`,
+      post_url: `${REDDIT}${element.data.permalink}`,
       domain: element.data.domain,
       url: element.data.url,
       text_post: element.data.is_self

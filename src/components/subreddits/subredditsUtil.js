@@ -144,31 +144,6 @@ async function parseSupload(supload_url) {
   }
 }
 
-function parseJson(json) {
-  return json.map(element => {
-    const parsedElement = {
-      id: element.data.id,
-      title: element.data.title,
-      nsfw: element.data.over_18,
-      subreddit: element.data.subreddit,
-      comments_count: element.data.num_comments,
-      upvotes_count: element.data.ups,
-      post_url: `${REDDIT}${element.data.permalink}`,
-      domain: element.data.domain,
-      url: element.data.url,
-      text_post: element.data.is_self
-    };
-    if (
-      element.data.media &&
-      element.data.media.reddit_video &&
-      element.data.media.reddit_video.fallback_url
-    ) {
-      parsedElement.video_url = element.data.media.reddit_video.fallback_url;
-    }
-    return parsedElement;
-  });
-}
-
 function parsePathname(pathname) {
   const split = pathname.split("/");
   const filtered = split.filter(item => item.length);
@@ -196,7 +171,6 @@ async function parseFlickr(flickrUrl) {
 }
 
 export default {
-  parseJson,
   parseBehance,
   parseGfycat,
   parseGifv,

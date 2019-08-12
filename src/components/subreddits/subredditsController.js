@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import helpers from "./helpers";
+import helpers from "./subredditsUtil";
 
 async function processVideos(posts) {
   for (let post of posts) {
@@ -80,7 +80,7 @@ const getUrl = (sub, sort, query) => {
   return `https://www.reddit.com/r/${sub}/${sort}.json`;
 };
 
-export const getSub = async (subreddit, sort, query) => {
+export const getSubreddit = async (subreddit, sort, query) => {
   const url = getUrl(subreddit, sort, query);
   const response = await axios.get(url);
   const data = response.data.data.children;
@@ -105,7 +105,7 @@ function parsePopularSubs(json) {
   });
 }
 
-export async function getPopularSubs() {
+export async function getPopularSubreddits() {
   const res = await axios.get("https://www.reddit.com/r/popular.json");
   const data = res.data.data.children;
   const subs = parsePopularSubs(data);

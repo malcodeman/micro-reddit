@@ -1,4 +1,5 @@
 import { getSubreddit, getPopularSubreddits } from "./subredditsController";
+import { LISTING_SORT, TIME_SORT } from "./subredditsConstants";
 
 async function routes(fastify, options) {
   fastify.route({
@@ -13,12 +14,52 @@ async function routes(fastify, options) {
   fastify.route({
     method: "GET",
     url: "/subs/:subreddit/:sort",
-    handler: async function(request, reply) {
-      const subreddit = request.params.subreddit;
-      const sort = request.params.sort;
-      const subs = await getSubreddit(subreddit, sort, request.query);
+    schema: {
+      querystring: {
+        after: { type: "string", default: "" },
+        time: {
+          type: "string",
+          enum: [
+            TIME_SORT.hour,
+            TIME_SORT.day,
+            TIME_SORT.week,
+            TIME_SORT.month,
+            TIME_SORT.year,
+            TIME_SORT.all
+          ]
+        }
+      },
+      params: {
+        type: "object",
+        properties: {
+          subreddit: { type: "string" },
+          sort: {
+            type: "string",
+            enum: [
+              LISTING_SORT.hot,
+              LISTING_SORT.new,
+              LISTING_SORT.top,
+              LISTING_SORT.controversial,
+              LISTING_SORT.rising
+            ]
+          }
+        },
+        required: ["subreddit", "sort"]
+      }
+    },
 
-      reply.send(subs);
+    handler: async function(request, reply) {
+      const params = {
+        subreddit: request.params.subreddit,
+        listingSort: request.params.sort
+      };
+      const query = {
+        after: request.query.after,
+        timeSort: request.query.time
+      };
+      const data = await getSubreddit(params, query);
+
+      reply.send(data);
     }
   });
 }

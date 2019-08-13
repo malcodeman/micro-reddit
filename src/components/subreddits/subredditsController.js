@@ -3,8 +3,8 @@ import axios from "axios";
 import util from "./util";
 import { REDDIT } from "./subredditsConstants";
 
-export async function getSubreddit(subreddit, sort, query) {
-  const url = util.getApiUrl(subreddit, sort, query);
+export async function getSubreddit(params, query) {
+  const url = util.getApiUrl(params, query);
   const response = await axios.get(url);
   const data = response.data.data.children;
   const before = response.data.data.before;

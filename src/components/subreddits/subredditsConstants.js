@@ -1,14 +1,24 @@
 export const REDDIT = "https://www.reddit.com";
 
-export const SORTS = {
+export const LISTING_SORT = {
   hot: "hot",
   new: "new",
   top: "top",
   controversial: "controversial",
-  rising: "risinh"
+  rising: "rising"
+};
+
+export const TIME_SORT = {
+  hour: "hour",
+  day: "day",
+  week: "week",
+  month: "month",
+  year: "year",
+  all: "all"
 };
 
 export default {
   REDDIT,
-  SORTS
+  LISTING_SORT,
+  TIME_SORT
 };

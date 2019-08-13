@@ -1,4 +1,4 @@
-import { SORTS, REDDIT } from "../subredditsConstants";
+import { LISTING_SORT, REDDIT } from "../subredditsConstants";
 import helpers from "../subredditsUtil";
 
 function parsePopularSubreddits(popular) {
@@ -14,19 +14,26 @@ function parsePopularSubreddits(popular) {
   });
 }
 
-function getApiUrl(sub, sort, query) {
-  if (sort === SORTS.top || sort === SORTS.controversial) {
-    const time = query.t;
+function getApiUrl(params, query) {
+  const { listingSort } = params;
+  const { subreddit } = params;
+  const { after } = query;
 
-    if (query.after) {
-      return `${REDDIT}/r/${sub}/${sort}.json?after=${query.after}&t=${time}`;
+  if (
+    listingSort === LISTING_SORT.top ||
+    listingSort === LISTING_SORT.controversial
+  ) {
+    const { timeSort } = query;
+
+    if (after) {
+      return `${REDDIT}/r/${subreddit}/${listingSort}.json?after=${after}&t=${timeSort}`;
     }
-    return `${REDDIT}/r/${sub}/${sort}.json?t=${time}`;
+    return `${REDDIT}/r/${subreddit}/${listingSort}.json?t=${timeSort}`;
   }
-  if (query.after) {
-    return `${REDDIT}/r/${sub}/${sort}.json?after=${query.after}`;
+  if (after) {
+    return `${REDDIT}/r/${subreddit}/${listingSort}.json?after=${after}`;
   }
-  return `${REDDIT}/r/${sub}/${sort}.json`;
+  return `${REDDIT}/r/${subreddit}/${listingSort}.json`;
 }
 
 function parsePosts(posts) {

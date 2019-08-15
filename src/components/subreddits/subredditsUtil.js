@@ -1,8 +1,5 @@
 import axios from "axios";
-import path from "path";
 import { request } from "graphql-request";
-
-import { REDDIT } from "./subredditsConstants";
 
 function parseYoutubeVideo(youtube_video_url) {
   const url = new URL(youtube_video_url);
@@ -13,40 +10,10 @@ function parseYoutubeVideo(youtube_video_url) {
   return `https://www.youtube.com/embed/${video_id}`;
 }
 
-function getExtension(filename) {
-  return path.parse(filename).ext;
-}
-
-function getFilename(filename) {
-  return path.parse(filename).name;
-}
-
 function parseGifv(imgur_url) {
   const url = new URL(imgur_url);
   // Example: https://i.imgur.com/VG899oz.mp4
   return `${url.protocol}//${url.hostname}/${getFilename(url.pathname)}.mp4`;
-}
-
-async function parseGfycat(gfycat_url) {
-  const url = new URL(gfycat_url);
-  const pathname = url.pathname;
-  const id = pathname.split("/")[1];
-  try {
-    const gfycat_api_key = process.env.GFYCAT_API_KEY;
-    const config = {
-      headers: {
-        Authorization: `Bearer ${gfycat_api_key}`
-      }
-    };
-    const res = await axios.get(
-      `https://api.gfycat.com/v1/gfycats/${id}`,
-      config
-    );
-    return `${res.data.gfyItem.mp4Url}`;
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
 }
 
 async function parseBehance(behance_url) {
@@ -63,32 +30,6 @@ async function parseBehance(behance_url) {
     console.log(error);
     return error;
   }
-}
-
-async function parseImgurAlbum(imgur_link) {
-  const url = new URL(imgur_link);
-  const id = getFilename(url.pathname.split("/").reverse()[0]);
-  const imgur_client_id = process.env.IMGUR_CLIENT_ID;
-  const config = {
-    headers: {
-      Authorization: `Client-ID ${imgur_client_id}`
-    }
-  };
-  try {
-    const res = await axios.get(
-      `https://api.imgur.com/3/album/${id}/images`,
-      config
-    );
-    return res.data.data.map(image => image.link);
-  } catch (error) {
-    console.log(error);
-    return error;
-  }
-}
-
-function isImgurAlbum(imgur_link) {
-  const url = new URL(imgur_link);
-  return url.pathname.split("/")[1] === "a";
 }
 
 function parsePornhub(pornhub_url) {
@@ -144,43 +85,11 @@ async function parseSupload(supload_url) {
   }
 }
 
-function parsePathname(pathname) {
-  const split = pathname.split("/");
-  const filtered = split.filter(item => item.length);
-
-  return filtered;
-}
-
-async function parseFlickr(flickrUrl) {
-  const FLICKR_API_KEY = process.env.FLICKR_API_KEY;
-  const url = new URL(flickrUrl);
-  const pathname = parsePathname(url.pathname);
-  const photoId = pathname[2];
-
-  try {
-    const res = await axios.get(
-      `https://www.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key=${FLICKR_API_KEY}&photo_id=${photoId}&format=json&nojsoncallback=1`
-    );
-    const index = res.data.sizes.size.length - 1;
-    const source = res.data.sizes.size[index].source;
-
-    return source;
-  } catch (error) {
-    throw new Error(error);
-  }
-}
-
 export default {
   parseBehance,
-  parseGfycat,
   parseGifv,
-  getFilename,
-  getExtension,
   parseYoutubeVideo,
-  isImgurAlbum,
-  parseImgurAlbum,
   parsePornhub,
   parseXvideos,
-  parseSupload,
-  parseFlickr
+  parseSupload
 };

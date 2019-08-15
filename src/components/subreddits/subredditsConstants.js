@@ -17,8 +17,18 @@ export const TIME_SORT = {
   all: "all"
 };
 
+export const ACCEPTED_FILE_TYPES = [".png", ".jpg", ".jpeg", ".mp4", ".gifv"];
+
+export const SUPPORTED_DOMAINS = {
+  imgur: "imgur.com",
+  gfycat: "gfycat.com",
+  flickr: "flickr.com"
+};
+
 export default {
   REDDIT,
   LISTING_SORT,
-  TIME_SORT
+  TIME_SORT,
+  ACCEPTED_FILE_TYPES,
+  SUPPORTED_DOMAINS
 };

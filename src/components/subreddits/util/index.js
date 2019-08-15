@@ -1,5 +1,15 @@
-import { LISTING_SORT, REDDIT } from "../subredditsConstants";
+import path from "path";
+
+import {
+  LISTING_SORT,
+  REDDIT,
+  ACCEPTED_FILE_TYPES,
+  SUPPORTED_DOMAINS
+} from "../subredditsConstants";
 import helpers from "../subredditsUtil";
+import gfycat from "./gfycat";
+import imgur from "./imgur";
+import flickr from "./flickr";
 
 function parsePopularSubreddits(popular) {
   return popular.map(element => {
@@ -62,69 +72,77 @@ function parsePosts(posts) {
   });
 }
 
-async function processVideos(posts) {
-  for (let post of posts) {
-    if (helpers.getExtension(post.url) === ".mp4") {
-      post.video_url = post.url;
-    }
-    if (post.domain === "gfycat.com" || post.domain === "zippy.gfycat.com") {
-      post.video_url = await helpers.parseGfycat(post.url);
-    }
-    if (helpers.getExtension(post.url) === ".gifv") {
-      post.video_url = helpers.parseGifv(post.url);
-    }
-    if (
-      post.domain === "youtube.com" ||
-      post.domain === "youtu.be" ||
-      post.domain === "m.youtube.com"
-    ) {
-      post.iframe_video = helpers.parseYoutubeVideo(post.url);
-    }
-    if (
-      post.domain === "pornhub.com" ||
-      post.domain === "de.pornhub.com" ||
-      post.domain === "es.pornhub.com"
-    ) {
-      post.iframe_video = helpers.parsePornhub(post.url);
-    }
-    if (post.domain === "xvideos.com") {
-      post.iframe_video = helpers.parseXvideos(post.url);
-    }
-    if (post.domain === "supload.com") {
-      post.video_url = await helpers.parseSupload(post.url);
-    }
-  }
-  return posts;
+function getExtension(filename) {
+  return path.parse(filename).ext;
 }
 
-async function processImages(posts) {
-  for (let post of posts) {
-    if (
-      post.domain === "imgur.com" &&
-      helpers.getExtension(post.url) !== ".jpg"
-    ) {
-      post.url = post.url += ".jpg";
-    }
-    if (
-      (post.domain === "imgur.com" || post.domain === "m.imgur.com") &&
-      helpers.isImgurAlbum(post.url)
-    ) {
-      post.imgur_album = await helpers.parseImgurAlbum(post.url);
-    }
-    if (post.domain === "behance.net") {
-      post.url = await helpers.parseBehance(post.url);
-    }
-    if (post.domain === "flickr.com") {
-      post.url = await helpers.parseFlickr(post.url);
+function getFilename(filename) {
+  return path.parse(filename).name;
+}
+
+function parsePathname(pathname) {
+  const split = pathname.split("/");
+  const filtered = split.filter(item => item.length);
+
+  return filtered;
+}
+
+async function parseUrls(posts) {
+  const parsed = [];
+  const skipped = [];
+
+  for (const post of posts) {
+    const extension = getExtension(post.url);
+    const acceptedFileType = ACCEPTED_FILE_TYPES.indexOf(extension) !== -1;
+
+    try {
+      if (acceptedFileType) {
+        parsed.push(post);
+      } else {
+        const domain = post.domain;
+
+        switch (domain) {
+          case SUPPORTED_DOMAINS.imgur:
+            parsed.push({
+              ...post,
+              url: (post.url += ".jpg")
+            });
+            break;
+          case SUPPORTED_DOMAINS.imgur && imgur.isAlbum(post.url):
+            parsed.push({
+              ...post,
+              url: await imgur.getAlbumUrl(post.url)
+            });
+            break;
+          case SUPPORTED_DOMAINS.flickr:
+            parsed.push({
+              ...post,
+              url: await flickr.getUrl(post.url)
+            });
+            break;
+          case SUPPORTED_DOMAINS.gfycat:
+            parsed.push({
+              ...post,
+              url: await await gfycat.getUrl(post.url)
+            });
+            break;
+          default:
+            throw new Error(`UnsupportedDomainException - ${domain}`);
+        }
+      }
+    } catch {
+      skipped.push(post);
     }
   }
-  return posts;
+
+  return { skipped, parsed };
 }
 
 export default {
   parsePopularSubreddits,
   getApiUrl,
-  processImages,
-  processVideos,
+  parseUrls,
+  getFilename,
+  parsePathname,
   parsePosts
 };

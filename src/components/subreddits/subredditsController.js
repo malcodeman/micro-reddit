@@ -9,9 +9,7 @@ export async function getSubreddit(params, query) {
   const data = response.data.data.children;
   const before = response.data.data.before;
   const after = response.data.data.after;
-  const posts = await util.processVideos(
-    await util.processImages(util.parsePosts(data))
-  );
+  const posts = await util.parseUrls(util.parsePosts(data));
 
   return { posts, before, after };
 }

@@ -6,10 +6,11 @@ import {
   ACCEPTED_FILE_TYPES,
   SUPPORTED_DOMAINS
 } from "../subredditsConstants";
-import helpers from "../subredditsUtil";
 import gfycat from "./gfycat";
 import imgur from "./imgur";
 import flickr from "./flickr";
+import behance from "./behance";
+import supload from "./supload";
 
 function parsePopularSubreddits(popular) {
   return popular.map(element => {
@@ -46,6 +47,12 @@ function getApiUrl(params, query) {
   return `${REDDIT}/r/${subreddit}/${listingSort}.json`;
 }
 
+function removeSearchParams(url) {
+  const parsedUrl = new URL(url);
+
+  return `${parsedUrl.origin}${parsedUrl.pathname}`;
+}
+
 function parsePosts(posts) {
   return posts.map(element => {
     const parsed = {
@@ -57,7 +64,7 @@ function parsePosts(posts) {
       upvotes_count: element.data.ups,
       post_url: `${REDDIT}${element.data.permalink}`,
       domain: element.data.domain,
-      url: element.data.url,
+      url: removeSearchParams(element.data.url),
       text_post: element.data.is_self
     };
 
@@ -97,7 +104,14 @@ async function parseUrls(posts) {
 
     try {
       if (acceptedFileType) {
-        parsed.push(post);
+        if (extension === ".gifv") {
+          parsed.push({
+            ...post,
+            url: imgur.parseGifv(post.url)
+          });
+        } else {
+          parsed.push(post);
+        }
       } else {
         const domain = post.domain;
 
@@ -123,7 +137,19 @@ async function parseUrls(posts) {
           case SUPPORTED_DOMAINS.gfycat:
             parsed.push({
               ...post,
-              url: await await gfycat.getUrl(post.url)
+              url: await gfycat.getUrl(post.url)
+            });
+            break;
+          case SUPPORTED_DOMAINS.behance:
+            parsed.push({
+              ...post,
+              url: await behance.getUrl(post.url)
+            });
+            break;
+          case SUPPORTED_DOMAINS.supload:
+            parsed.push({
+              ...post,
+              url: await supload.getUrl(post.url)
             });
             break;
           default:

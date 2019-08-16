@@ -17,12 +17,21 @@ export const TIME_SORT = {
   all: "all"
 };
 
-export const ACCEPTED_FILE_TYPES = [".png", ".jpg", ".jpeg", ".mp4", ".gifv"];
+export const ACCEPTED_FILE_TYPES = [
+  ".png",
+  ".jpg",
+  ".jpeg",
+  ".mp4",
+  ".gifv",
+  ".gif"
+];
 
 export const SUPPORTED_DOMAINS = {
   imgur: "imgur.com",
   gfycat: "gfycat.com",
-  flickr: "flickr.com"
+  flickr: "flickr.com",
+  behance: "behance.net",
+  supload: "supload.com"
 };
 
 export default {

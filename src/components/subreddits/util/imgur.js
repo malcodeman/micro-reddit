@@ -27,7 +27,16 @@ function isAlbum(imgurLink) {
   return url.pathname.split("/")[1] === "a";
 }
 
+function parseGifv(imgurUrl) {
+  const url = new URL(imgurUrl);
+
+  return `${url.protocol}//${url.hostname}/${util.getFilename(
+    url.pathname
+  )}.mp4`;
+}
+
 export default {
   getAlbumUrl,
-  isAlbum
+  isAlbum,
+  parseGifv
 };

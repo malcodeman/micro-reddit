@@ -28,7 +28,7 @@ function parsePopularSubreddits(popular) {
 function getApiUrl(params, query) {
   const { listingSort } = params;
   const { subreddit } = params;
-  const { after } = query;
+  const { after, limit } = query;
 
   if (
     listingSort === LISTING_SORT.top ||
@@ -37,14 +37,14 @@ function getApiUrl(params, query) {
     const { timeSort } = query;
 
     if (after) {
-      return `${REDDIT}/r/${subreddit}/${listingSort}.json?after=${after}&t=${timeSort}`;
+      return `${REDDIT}/r/${subreddit}/${listingSort}.json?after=${after}&t=${timeSort}&limit=${limit}`;
     }
-    return `${REDDIT}/r/${subreddit}/${listingSort}.json?t=${timeSort}`;
+    return `${REDDIT}/r/${subreddit}/${listingSort}.json?t=${timeSort}&limit=${limit}`;
   }
   if (after) {
-    return `${REDDIT}/r/${subreddit}/${listingSort}.json?after=${after}`;
+    return `${REDDIT}/r/${subreddit}/${listingSort}.json?after=${after}&limit=${limit}`;
   }
-  return `${REDDIT}/r/${subreddit}/${listingSort}.json`;
+  return `${REDDIT}/r/${subreddit}/${listingSort}.json?limit=${limit}`;
 }
 
 function removeSearchParams(url) {

@@ -17,6 +17,7 @@ async function routes(fastify, options) {
     schema: {
       querystring: {
         after: { type: "string", default: "" },
+        limit: { type: "number", default: 25, minimum: 1, maximum: 100 },
         time: {
           type: "string",
           enum: [
@@ -55,6 +56,7 @@ async function routes(fastify, options) {
       };
       const query = {
         after: request.query.after,
+        limit: request.query.limit,
         timeSort: request.query.time
       };
       const data = await getSubreddit(params, query);

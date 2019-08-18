@@ -53,32 +53,6 @@ function removeSearchParams(url) {
   return `${parsedUrl.origin}${parsedUrl.pathname}`;
 }
 
-function parsePosts(posts) {
-  return posts.map(element => {
-    const parsed = {
-      id: element.data.id,
-      title: element.data.title,
-      nsfw: element.data.over_18,
-      subreddit: element.data.subreddit,
-      comments_count: element.data.num_comments,
-      upvotes_count: element.data.ups,
-      post_url: `${REDDIT}${element.data.permalink}`,
-      domain: element.data.domain,
-      url: removeSearchParams(element.data.url),
-      text_post: element.data.is_self
-    };
-
-    if (
-      element.data.media &&
-      element.data.media.reddit_video &&
-      element.data.media.reddit_video.fallback_url
-    ) {
-      parsed.video_url = element.data.media.reddit_video.fallback_url;
-    }
-    return parsed;
-  });
-}
-
 function getExtension(filename) {
   return path.parse(filename).ext;
 }
@@ -94,62 +68,75 @@ function parsePathname(pathname) {
   return filtered;
 }
 
-async function parseUrls(posts) {
+async function parsePosts(posts) {
   const parsed = [];
   const skipped = [];
 
   for (const post of posts) {
-    const extension = getExtension(post.url);
+    const parsedPost = {
+      id: post.data.id,
+      title: post.data.title,
+      nsfw: post.data.over_18,
+      subreddit: post.data.subreddit,
+      comments_count: post.data.num_comments,
+      upvotes_count: post.data.ups,
+      post_url: `${REDDIT}${post.data.permalink}`,
+      domain: post.data.domain,
+      url: removeSearchParams(post.data.url),
+      text_post: post.data.is_self
+    };
+    const url = parsedPost.url;
+    const extension = getExtension(url);
     const acceptedFileType = ACCEPTED_FILE_TYPES.indexOf(extension) !== -1;
 
     try {
       if (acceptedFileType) {
         if (extension === ".gifv") {
           parsed.push({
-            ...post,
-            url: imgur.parseGifv(post.url)
+            ...parsedPost,
+            url: imgur.parseGifv(url)
           });
         } else {
-          parsed.push(post);
+          parsed.push(parsedPost);
         }
       } else {
-        const domain = post.domain;
+        const domain = parsedPost.domain;
 
         switch (domain) {
           case SUPPORTED_DOMAINS.imgur:
             parsed.push({
-              ...post,
-              url: (post.url += ".jpg")
+              ...parsedPost,
+              url: `${url}.jpg`
             });
             break;
-          case SUPPORTED_DOMAINS.imgur && imgur.isAlbum(post.url):
+          case SUPPORTED_DOMAINS.imgur && imgur.isAlbum(url):
             parsed.push({
-              ...post,
-              url: await imgur.getAlbumUrl(post.url)
+              ...parsedPost,
+              url: await imgur.getAlbumUrl(url)
             });
             break;
           case SUPPORTED_DOMAINS.flickr:
             parsed.push({
-              ...post,
-              url: await flickr.getUrl(post.url)
+              ...parsedPost,
+              url: await flickr.getUrl(url)
             });
             break;
           case SUPPORTED_DOMAINS.gfycat:
             parsed.push({
-              ...post,
-              url: await gfycat.getUrl(post.url)
+              ...parsedPost,
+              url: await gfycat.getUrl(url)
             });
             break;
           case SUPPORTED_DOMAINS.behance:
             parsed.push({
-              ...post,
-              url: await behance.getUrl(post.url)
+              ...parsedPost,
+              url: await behance.getUrl(url)
             });
             break;
           case SUPPORTED_DOMAINS.supload:
             parsed.push({
-              ...post,
-              url: await supload.getUrl(post.url)
+              ...parsedPost,
+              url: await supload.getUrl(url)
             });
             break;
           default:
@@ -157,7 +144,7 @@ async function parseUrls(posts) {
         }
       }
     } catch {
-      skipped.push(post);
+      skipped.push(parsedPost);
     }
   }
 
@@ -167,8 +154,7 @@ async function parseUrls(posts) {
 export default {
   parsePopularSubreddits,
   getApiUrl,
-  parseUrls,
+  parsePosts,
   getFilename,
-  parsePathname,
-  parsePosts
+  parsePathname
 };

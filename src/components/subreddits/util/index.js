@@ -68,12 +68,45 @@ function parsePathname(pathname) {
   return filtered;
 }
 
+async function parseUrl(rawUrl, domain) {
+  const url = removeSearchParams(rawUrl);
+  const extension = getExtension(url);
+  const acceptedFileType = ACCEPTED_FILE_TYPES.indexOf(extension) !== -1;
+
+  if (acceptedFileType) {
+    if (extension === ".gifv") {
+      return imgur.parseGifv(url);
+    } else {
+      return url;
+    }
+  } else {
+    switch (domain) {
+      case SUPPORTED_DOMAINS.imgur:
+        return `${url}.jpg`;
+      case SUPPORTED_DOMAINS.imgur && imgur.isAlbum(url):
+        return await imgur.getAlbumUrl(url);
+      case SUPPORTED_DOMAINS.flickr:
+        return await flickr.getUrl(url);
+      case SUPPORTED_DOMAINS.gfycat:
+        return await gfycat.getUrl(url);
+      case SUPPORTED_DOMAINS.behance:
+        return await behance.getUrl(url);
+      case SUPPORTED_DOMAINS.supload:
+        return await supload.getUrl(url);
+      default:
+        throw new Error(`UnsupportedDomainException - ${domain}`);
+    }
+  }
+}
+
 async function parsePosts(posts) {
   const parsed = [];
   const skipped = [];
 
   for (const post of posts) {
-    const parsedPost = {
+    const serializedPost = {
+      url: post.data.url,
+      domain: post.data.domain,
       id: post.data.id,
       title: post.data.title,
       nsfw: post.data.over_18,
@@ -81,70 +114,17 @@ async function parsePosts(posts) {
       comments_count: post.data.num_comments,
       upvotes_count: post.data.ups,
       post_url: `${REDDIT}${post.data.permalink}`,
-      domain: post.data.domain,
-      url: removeSearchParams(post.data.url),
       text_post: post.data.is_self
     };
-    const url = parsedPost.url;
-    const extension = getExtension(url);
-    const acceptedFileType = ACCEPTED_FILE_TYPES.indexOf(extension) !== -1;
 
     try {
-      if (acceptedFileType) {
-        if (extension === ".gifv") {
-          parsed.push({
-            ...parsedPost,
-            url: imgur.parseGifv(url)
-          });
-        } else {
-          parsed.push(parsedPost);
-        }
-      } else {
-        const domain = parsedPost.domain;
+      const rawUrl = serializedPost.url;
+      const domain = serializedPost.domain;
+      const url = await parseUrl(rawUrl, domain);
 
-        switch (domain) {
-          case SUPPORTED_DOMAINS.imgur:
-            parsed.push({
-              ...parsedPost,
-              url: `${url}.jpg`
-            });
-            break;
-          case SUPPORTED_DOMAINS.imgur && imgur.isAlbum(url):
-            parsed.push({
-              ...parsedPost,
-              url: await imgur.getAlbumUrl(url)
-            });
-            break;
-          case SUPPORTED_DOMAINS.flickr:
-            parsed.push({
-              ...parsedPost,
-              url: await flickr.getUrl(url)
-            });
-            break;
-          case SUPPORTED_DOMAINS.gfycat:
-            parsed.push({
-              ...parsedPost,
-              url: await gfycat.getUrl(url)
-            });
-            break;
-          case SUPPORTED_DOMAINS.behance:
-            parsed.push({
-              ...parsedPost,
-              url: await behance.getUrl(url)
-            });
-            break;
-          case SUPPORTED_DOMAINS.supload:
-            parsed.push({
-              ...parsedPost,
-              url: await supload.getUrl(url)
-            });
-            break;
-          default:
-            throw new Error(`UnsupportedDomainException - ${domain}`);
-        }
-      }
+      parsed.push({ ...serializedPost, url });
     } catch {
-      skipped.push(parsedPost);
+      skipped.push(serializedPost);
     }
   }
 

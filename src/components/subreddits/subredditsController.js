@@ -22,6 +22,32 @@ export async function getPopularSubreddits() {
   return subreddits;
 }
 
+export async function getPost(params) {
+  const { postId } = params;
+  const data = await axios.get(`${REDDIT}/comments/${postId}.json`);
+  const post = data.data[0].data.children[0].data;
+  const rawComments = data.data[1].data.children;
+  const comments = util.parseComments(rawComments);
+  const rawUrl = post.url;
+  const domain = post.domain;
+  const url = await util.parseUrl(rawUrl, domain);
+  const serializedPost = {
+    url,
+    domain,
+    comments,
+    id: post.id,
+    title: post.title,
+    nsfw: post.over_18,
+    subreddit: post.subreddit,
+    comments_count: post.num_comments,
+    upvotes_count: post.ups,
+    post_url: `${REDDIT}${post.permalink}`,
+    text_post: post.is_self
+  };
+
+  return serializedPost;
+}
+
 export default {
   getSubreddit,
   getPopularSubreddits

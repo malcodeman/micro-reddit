@@ -34,10 +34,13 @@ export const SUPPORTED_DOMAINS = {
   supload: "supload.com"
 };
 
+export const UNACCEPTED_COMMENTS = ["[deleted]", "[removed]"];
+
 export default {
   REDDIT,
   LISTING_SORT,
   TIME_SORT,
   ACCEPTED_FILE_TYPES,
-  SUPPORTED_DOMAINS
+  SUPPORTED_DOMAINS,
+  UNACCEPTED_COMMENTS
 };

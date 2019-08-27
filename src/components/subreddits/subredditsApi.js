@@ -1,4 +1,8 @@
-import { getSubreddit, getPopularSubreddits } from "./subredditsController";
+import {
+  getSubreddit,
+  getPopularSubreddits,
+  getPost
+} from "./subredditsController";
 import { LISTING_SORT, TIME_SORT } from "./subredditsConstants";
 
 async function routes(fastify, options) {
@@ -63,7 +67,19 @@ async function routes(fastify, options) {
 
       reply.send(data);
     }
-  });
+  }),
+    fastify.route({
+      method: "GET",
+      url: "/posts/:postId",
+      handler: async function(request, reply) {
+        const params = {
+          postId: request.params.postId
+        };
+        const post = await getPost(params);
+
+        reply.send(post);
+      }
+    });
 }
 
 export default routes;

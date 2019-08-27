@@ -4,7 +4,8 @@ import {
   LISTING_SORT,
   REDDIT,
   ACCEPTED_FILE_TYPES,
-  SUPPORTED_DOMAINS
+  SUPPORTED_DOMAINS,
+  UNACCEPTED_COMMENTS
 } from "../subredditsConstants";
 import gfycat from "./gfycat";
 import imgur from "./imgur";
@@ -131,10 +132,29 @@ async function parsePosts(posts) {
   return { skipped, parsed };
 }
 
+function parseComments(rawComments) {
+  const comments = rawComments.map(comment => {
+    const body = comment.data.body;
+    const unacceptedComment = UNACCEPTED_COMMENTS.indexOf(body) !== -1;
+
+    if (!unacceptedComment) {
+      return {
+        body,
+        upvotes_count: comment.data.ups
+      };
+    }
+  });
+  const sorted = comments.sort((a, b) => b.upvotes_count - a.upvotes_count);
+
+  return sorted;
+}
+
 export default {
   parsePopularSubreddits,
   getApiUrl,
   parsePosts,
+  parseUrl,
+  parseComments,
   getFilename,
   parsePathname
 };

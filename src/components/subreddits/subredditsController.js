@@ -42,7 +42,8 @@ export async function getPost(params) {
     comments_count: post.num_comments,
     upvotes_count: post.ups,
     post_url: `${REDDIT}${post.permalink}`,
-    text_post: post.is_self
+    text_post: post.is_self,
+    thumbnail: post.thumbnail
   };
 
   return serializedPost;

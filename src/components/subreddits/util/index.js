@@ -5,7 +5,8 @@ import {
   REDDIT,
   ACCEPTED_FILE_TYPES,
   SUPPORTED_DOMAINS,
-  UNACCEPTED_COMMENTS
+  UNACCEPTED_COMMENTS,
+  SUPPORTED_VIDEO_FORMATS
 } from "../subredditsConstants";
 import gfycat from "./gfycat";
 import imgur from "./imgur";
@@ -69,6 +70,14 @@ function parsePathname(pathname) {
   return filtered;
 }
 
+function checkIfVideo(url) {
+  const extension = getExtension(url);
+  const supportedVideoFormat =
+    SUPPORTED_VIDEO_FORMATS.indexOf(extension) !== -1;
+
+  return supportedVideoFormat;
+}
+
 async function parseUrl(rawUrl, domain) {
   const url = removeSearchParams(rawUrl);
   const extension = getExtension(url);
@@ -124,7 +133,7 @@ async function parsePosts(posts) {
       const domain = serializedPost.domain;
       const url = await parseUrl(rawUrl, domain);
 
-      parsed.push({ ...serializedPost, url });
+      parsed.push({ ...serializedPost, url, is_video: checkIfVideo(url) });
     } catch {
       skipped.push(serializedPost);
     }

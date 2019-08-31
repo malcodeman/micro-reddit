@@ -34,6 +34,8 @@ export const SUPPORTED_DOMAINS = {
   supload: "supload.com"
 };
 
+export const SUPPORTED_VIDEO_FORMATS = [".mp4"];
+
 export const UNACCEPTED_COMMENTS = ["[deleted]", "[removed]"];
 
 export default {
@@ -42,5 +44,6 @@ export default {
   TIME_SORT,
   ACCEPTED_FILE_TYPES,
   SUPPORTED_DOMAINS,
-  UNACCEPTED_COMMENTS
+  UNACCEPTED_COMMENTS,
+  SUPPORTED_VIDEO_FORMATS
 };

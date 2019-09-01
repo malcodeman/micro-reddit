@@ -43,7 +43,9 @@ export async function getPost(params) {
     upvotes_count: post.ups,
     post_url: `${REDDIT}${post.permalink}`,
     text_post: post.is_self,
-    thumbnail: post.thumbnail
+    thumbnail: post.thumbnail,
+    author: post.author,
+    created_at: post.created_utc * 1000
   };
 
   return serializedPost;

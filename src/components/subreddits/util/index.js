@@ -125,7 +125,9 @@ async function parsePosts(posts) {
       upvotes_count: post.data.ups,
       post_url: `${REDDIT}${post.data.permalink}`,
       text_post: post.data.is_self,
-      thumbnail: post.data.thumbnail
+      thumbnail: post.data.thumbnail,
+      author: post.data.author,
+      created_at: post.data.created_utc * 1000
     };
 
     try {

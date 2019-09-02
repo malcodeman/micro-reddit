@@ -44,6 +44,8 @@ Routes:
 
 - `/subs/:subreddit/:sort`
 
+- `/posts/:postId`
+
 - `/popular`
 
 Supported third-party services:
@@ -52,9 +54,6 @@ Supported third-party services:
 - behance
 - gfycat
 - supload
-- youtube
-- pornhub
-- xvideos
 - flickr
 
 ## License

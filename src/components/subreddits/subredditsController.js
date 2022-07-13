@@ -45,7 +45,8 @@ export async function getPost(params) {
     text_post: post.is_self,
     thumbnail: post.thumbnail,
     author: post.author,
-    created_at: post.created_utc * 1000
+    created_at: post.created_utc * 1000,
+    is_video: util.checkIfVideo(url),
   };
 
   return serializedPost;
@@ -53,5 +54,5 @@ export async function getPost(params) {
 
 export default {
   getSubreddit,
-  getPopularSubreddits
+  getPopularSubreddits,
 };

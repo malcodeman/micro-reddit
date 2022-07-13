@@ -2,9 +2,9 @@ import app from "./app";
 
 const PORT = process.env.PORT;
 
-async function start() {
+function start() {
   try {
-    await app.listen(PORT);
+    app.listen(PORT);
   } catch (err) {
     app.log.error(err);
     process.exit(1);

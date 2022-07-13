@@ -6,7 +6,7 @@ import {
   ACCEPTED_FILE_TYPES,
   SUPPORTED_DOMAINS,
   UNACCEPTED_COMMENTS,
-  SUPPORTED_VIDEO_FORMATS
+  SUPPORTED_VIDEO_FORMATS,
 } from "../subredditsConstants";
 import gfycat from "./gfycat";
 import imgur from "./imgur";
@@ -15,12 +15,12 @@ import behance from "./behance";
 import supload from "./supload";
 
 function parsePopularSubreddits(popular) {
-  return popular.map(element => {
+  return popular.map((element) => {
     const parsed = {
       id: element.data.subreddit_id,
       name: element.data.subreddit,
       name_prefixed: element.data.subreddit_name_prefixed,
-      subscribers_count: element.data.subreddit_subscribers
+      subscribers_count: element.data.subreddit_subscribers,
     };
 
     return parsed;
@@ -65,7 +65,7 @@ function getFilename(filename) {
 
 function parsePathname(pathname) {
   const split = pathname.split("/");
-  const filtered = split.filter(item => item.length);
+  const filtered = split.filter((item) => item.length);
 
   return filtered;
 }
@@ -127,7 +127,7 @@ async function parsePosts(posts) {
       text_post: post.data.is_self,
       thumbnail: post.data.thumbnail,
       author: post.data.author,
-      created_at: post.data.created_utc * 1000
+      created_at: post.data.created_utc * 1000,
     };
 
     try {
@@ -145,16 +145,19 @@ async function parsePosts(posts) {
 }
 
 function parseComments(rawComments) {
-  const comments = rawComments.map(comment => {
+  const filtered = rawComments.filter(
+    (item) => !UNACCEPTED_COMMENTS.indexOf(item.data.body) !== -1
+  );
+  const comments = filtered.map((comment) => {
+    const id = comment.data.id;
+    const author = comment.data.author;
     const body = comment.data.body;
-    const unacceptedComment = UNACCEPTED_COMMENTS.indexOf(body) !== -1;
-
-    if (!unacceptedComment) {
-      return {
-        body,
-        upvotes_count: comment.data.ups
-      };
-    }
+    return {
+      id,
+      author,
+      body,
+      upvotes_count: comment.data.ups,
+    };
   });
   const sorted = comments.sort((a, b) => b.upvotes_count - a.upvotes_count);
 
@@ -168,5 +171,6 @@ export default {
   parseUrl,
   parseComments,
   getFilename,
-  parsePathname
+  parsePathname,
+  checkIfVideo,
 };

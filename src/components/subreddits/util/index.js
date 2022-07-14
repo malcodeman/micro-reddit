@@ -157,6 +157,7 @@ function parseComments(rawComments) {
       author,
       body,
       upvotes_count: comment.data.ups,
+      created_at: comment.data.created_utc * 1000,
     };
   });
   const sorted = comments.sort((a, b) => b.upvotes_count - a.upvotes_count);

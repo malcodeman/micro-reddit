@@ -146,7 +146,8 @@ async function parsePosts(posts) {
 
 function parseComments(rawComments) {
   const filtered = rawComments.filter(
-    (item) => !UNACCEPTED_COMMENTS.indexOf(item.data.body) !== -1
+    (item) =>
+      item.data.body && !UNACCEPTED_COMMENTS.indexOf(item.data.body) !== -1
   );
   const comments = filtered.map((comment) => {
     const id = comment.data.id;

@@ -1,19 +1,19 @@
 import {
   getSubreddit,
   getPopularSubreddits,
-  getPost
+  getPost,
 } from "./subredditsController";
 import { LISTING_SORT, TIME_SORT } from "./subredditsConstants";
 
-async function routes(fastify, options) {
+async function routes(fastify) {
   fastify.route({
     method: "GET",
     url: "/popular",
-    handler: async function(request, reply) {
+    handler: async function (_request, reply) {
       const subs = await getPopularSubreddits();
 
       reply.send({ subs });
-    }
+    },
   });
   fastify.route({
     method: "GET",
@@ -30,9 +30,9 @@ async function routes(fastify, options) {
             TIME_SORT.week,
             TIME_SORT.month,
             TIME_SORT.year,
-            TIME_SORT.all
-          ]
-        }
+            TIME_SORT.all,
+          ],
+        },
       },
       params: {
         type: "object",
@@ -45,40 +45,40 @@ async function routes(fastify, options) {
               LISTING_SORT.new,
               LISTING_SORT.top,
               LISTING_SORT.controversial,
-              LISTING_SORT.rising
-            ]
-          }
+              LISTING_SORT.rising,
+            ],
+          },
         },
-        required: ["subreddit", "sort"]
-      }
+        required: ["subreddit", "sort"],
+      },
     },
 
-    handler: async function(request, reply) {
+    handler: async function (request, reply) {
       const params = {
         subreddit: request.params.subreddit,
-        listingSort: request.params.sort
+        listingSort: request.params.sort,
       };
       const query = {
         after: request.query.after,
         limit: request.query.limit,
-        timeSort: request.query.time
+        timeSort: request.query.time,
       };
       const data = await getSubreddit(params, query);
 
       reply.send(data);
-    }
+    },
   }),
     fastify.route({
       method: "GET",
       url: "/posts/:postId",
-      handler: async function(request, reply) {
+      handler: async function (request, reply) {
         const params = {
-          postId: request.params.postId
+          postId: request.params.postId,
         };
         const post = await getPost(params);
 
         reply.send(post);
-      }
+      },
     });
 }
 
